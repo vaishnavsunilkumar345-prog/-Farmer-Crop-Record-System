@@ -1,0 +1,9 @@
+{% extends 'crops/base.html' %}
+{% block content %}
+    <h1>Farmer Crop Record System</h1>
+    <p>Welcome to the Farmer Crop Record System. Use the links below to add new crop records or view existing ones.</p>
+    <p>
+        <a class="btn" href="{% url 'add_crop' %}">Add Crop</a>
+        <a class="btn" href="{% url 'crop_list' %}">View Crops</a>
+    </p>
+{% endblock %}

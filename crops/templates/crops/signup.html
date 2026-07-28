@@ -1,0 +1,9 @@
+{% extends 'crops/base.html' %}
+{% block content %}
+    <h2>Signup</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><button class="btn" type="submit">Signup</button> <a class="btn secondary" href="{% url 'login' %}">Login</a></p>
+    </form>
+{% endblock %}

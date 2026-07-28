@@ -1,0 +1,37 @@
+{% extends 'crops/base.html' %}
+{% block content %}
+    <h2>Add Crop</h2>
+    <form method="post" onsubmit="return validateForm();">
+        {% csrf_token %}
+        <p>
+            <label>Crop Name</label><br>
+            {{ form.crop_name }}
+        </p>
+        <p>
+            <label>Farmer Name</label><br>
+            {{ form.farmer_name }}
+        </p>
+        <p>
+            <label>Season</label><br>
+            {{ form.season }}
+        </p>
+        <p>
+            <label>Price</label><br>
+            {{ form.price }}
+        </p>
+        <p><button class="btn" type="submit">Save</button> <a class="btn secondary" href="{% url 'crop_list' %}">Cancel</a></p>
+    </form>
+    <script>
+        function validateForm() {
+            var cn = document.getElementById('id_crop_name').value.trim();
+            var fn = document.getElementById('id_farmer_name').value.trim();
+            var s = document.getElementById('id_season').value.trim();
+            var p = document.getElementById('id_price').value.trim();
+            if (cn === '' || fn === '' || s === '' || p === '') {
+                alert('Please fill all fields');
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}
