@@ -1,0 +1,41 @@
+{% extends 'crops/base.html' %}
+{% block title %}My dashboard - Crop Records{% endblock %}
+{% block content %}
+    <div class="page-head">
+        <div>
+            <h1>Hello, {{ user.username }}</h1>
+            <p>Your own crop records.</p>
+        </div>
+        <a class="btn" href="{% url 'add_crop' %}">Add crop</a>
+    </div>
+
+    {% if total_crops %}
+        <div class="summary">
+            <div><strong>{{ total_crops }}</strong><span>Crops recorded</span></div>
+            <div><strong>{{ total_seasons }}</strong><span>Seasons covered</span></div>
+        </div>
+        <section class="panel">
+            <div class="panel-head">
+                <h3>Recently added</h3>
+                <a href="{% url 'crop_list' %}">See all my crops</a>
+            </div>
+            <ul class="crop-list">
+                {% for crop in recent %}
+                    <li>
+                        <div>
+                            <strong>{{ crop.crop_name }}</strong>
+                            <small>{{ crop.farmer_name }}, {{ crop.season }}</small>
+                        </div>
+                        <div>{{ crop.price }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% else %}
+        <div class="invite">
+            <h2>Add your first crop</h2>
+            <p>Record the crop, farmer, season and price. It will show up here.</p>
+            <a class="btn" href="{% url 'add_crop' %}">Add crop</a>
+        </div>
+    {% endif %}
+{% endblock %}

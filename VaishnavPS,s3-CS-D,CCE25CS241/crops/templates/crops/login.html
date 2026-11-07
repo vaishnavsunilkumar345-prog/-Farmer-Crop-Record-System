@@ -1,9 +1,16 @@
 {% extends 'crops/base.html' %}
-{% block content %}
-    <h2>Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <p><button class="btn" type="submit">Login</button> <a class="btn secondary" href="{% url 'signup' %}">Signup</a></p>
-    </form>
+{% block title %}Log in - Crop Records{% endblock %}
+{% block public_content %}
+    <div class="auth-card">
+        <h2>Log in</h2>
+        <p style="color:var(--muted)">Use the username and password you signed up with.</p>
+        <form method="post">
+            {% csrf_token %}
+            {% include 'crops/_form_fields.html' %}
+            <div class="form-actions">
+                <button class="btn" type="submit">Log in</button>
+                <a href="{% url 'signup' %}">Need an account? Sign up</a>
+            </div>
+        </form>
+    </div>
 {% endblock %}

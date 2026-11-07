@@ -1,47 +1,71 @@
-<!doctype html>
-<html>
+{% load static %}<!doctype html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Farmer Crop Record System</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f8f8; }
-        .container { width: 800px; margin: 30px auto; background: #fff; padding: 20px; box-shadow: 0 0 6px rgba(0,0,0,0.1); }
-        .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { display: inline-block; padding: 8px 14px; background: #007bff; color: #fff; text-decoration: none; border-radius: 4px; }
-        .btn.secondary { background: #6c757d; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 8px 10px; border: 1px solid #ddd; text-align: left; }
-        footer { text-align: center; margin-top: 20px; color: #666; }
-        .message { padding: 10px; background: #ffeeba; margin-bottom: 10px; border-radius: 4px; }
-        .toplinks { gap: 8px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Farmer Crop Record System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'crops/style.css' %}">
 </head>
-<body>
-    <div class="container">
-        <div class="nav">
+{% if user.is_authenticated %}
+<body class="{% if user.is_staff %}role-admin{% else %}role-user{% endif %}">
+    {% with current=request.resolver_match.url_name %}
+    <div class="shell">
+        <aside class="sidebar">
             <div>
-                <a class="btn" href="{% url 'home' %}">Home</a>
-                <a class="btn" href="{% url 'crop_list' %}">Crops</a>
+                <a class="brand" href="{% url 'dashboard' %}">Crop Records</a><br>
+                <span class="role-pill">{% if user.is_staff %}Admin{% else %}User{% endif %}</span>
             </div>
-            <div class="toplinks">
-                {% if user.is_authenticated %}
-                    <span>Welcome, {{ user.username }}</span>
-                    <a class="btn secondary" href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                    <a class="btn" href="{% url 'login' %}">Login</a>
-                    <a class="btn secondary" href="{% url 'signup' %}">Signup</a>
+            <nav class="side-nav" aria-label="Main">
+                <a href="{% url 'dashboard' %}" {% if current == 'dashboard' %}aria-current="page"{% endif %}>Dashboard</a>
+                <a href="{% url 'crop_list' %}" {% if current == 'crop_list' or current == 'edit_crop' %}aria-current="page"{% endif %}>{% if user.is_staff %}All crop records{% else %}My crops{% endif %}</a>
+                <a href="{% url 'add_crop' %}" {% if current == 'add_crop' %}aria-current="page"{% endif %}>Add crop</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:auth_user_changelist' %}">Manage users</a>
+                    <a href="{% url 'admin:index' %}">Site administration</a>
                 {% endif %}
+            </nav>
+            <div class="side-foot">
+                Signed in as <strong>{{ user.username }}</strong><br>
+                <a href="{% url 'logout' %}">Log out</a>
             </div>
-        </div>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="message">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% block content %}{% endblock %}
-        <footer>
-            Farmer Support Org © 2026
-        </footer>
+        </aside>
+        <main class="main">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    {% endwith %}
+</body>
+{% else %}
+<body>
+    <div class="public">
+        <header class="public-bar">
+            <a class="brand" href="{% url 'home' %}">Crop Records</a>
+            <nav aria-label="Account">
+                <a class="btn secondary" href="{% url 'login' %}">Log in</a>
+                <a class="btn" href="{% url 'signup' %}">Sign up</a>
+            </nav>
+        </header>
+        <main class="public-main">
+            <div>
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="message {{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% block public_content %}{% endblock %}
+            </div>
+        </main>
+        <footer class="site-foot">Farmer Support Org &copy; 2026</footer>
     </div>
 </body>
+{% endif %}
 </html>

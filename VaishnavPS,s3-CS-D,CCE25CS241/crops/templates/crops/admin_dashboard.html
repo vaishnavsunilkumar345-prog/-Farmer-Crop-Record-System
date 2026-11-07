@@ -1,0 +1,66 @@
+{% extends 'crops/base.html' %}
+{% block title %}Admin dashboard - Crop Records{% endblock %}
+{% block content %}
+    <div class="page-head">
+        <div>
+            <h1>Admin dashboard</h1>
+            <p>Records from every user, in one view.</p>
+        </div>
+        <div>
+            <a class="btn secondary" href="{% url 'admin:auth_user_changelist' %}">Manage users</a>
+            <a class="btn" href="{% url 'add_crop' %}">Add crop</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><strong>{{ total_crops }}</strong><span>Crop records</span></div>
+        <div class="stat"><strong>{{ total_farmers }}</strong><span>Farmers recorded</span></div>
+        <div class="stat"><strong>{{ total_users }}</strong><span>Registered users</span></div>
+        <div class="stat{% if unassigned %} warn{% endif %}"><strong>{{ unassigned }}</strong><span>Records with no owner</span></div>
+    </div>
+
+    <div class="grid-two">
+        <section class="panel">
+            <div class="panel-head">
+                <h3>Latest records</h3>
+                <a href="{% url 'crop_list' %}">View all</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Crop</th><th>Farmer</th><th>Season</th><th>Price</th><th>Added by</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for crop in recent %}
+                            <tr>
+                                <td>{{ crop.crop_name }}</td>
+                                <td>{{ crop.farmer_name }}</td>
+                                <td>{{ crop.season }}</td>
+                                <td>{{ crop.price }}</td>
+                                <td>{% if crop.owner %}{{ crop.owner.username }}{% else %}No owner{% endif %}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="5" class="empty">No records yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h3>Records by season</h3>
+            {% if seasons %}
+                <ul class="bars">
+                    {% for s in seasons %}
+                        <li>
+                            <div class="row"><span>{{ s.season }}</span><strong>{{ s.total }}</strong></div>
+                            <div class="bar"><i style="width: {% widthratio s.total total_crops 100 %}%"></i></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color:var(--muted)">Season totals appear once records are added.</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,9 +1,11 @@
 {% extends 'crops/base.html' %}
-{% block content %}
-    <h1>Farmer Crop Record System</h1>
-    <p>Welcome to the Farmer Crop Record System. Use the links below to add new crop records or view existing ones.</p>
-    <p>
-        <a class="btn" href="{% url 'add_crop' %}">Add Crop</a>
-        <a class="btn" href="{% url 'crop_list' %}">View Crops</a>
-    </p>
+{% block public_content %}
+    <section class="hero">
+        <h1>Keep every farmer's crop records in one place</h1>
+        <p>Log the crop, the farmer, the season and the price. Members manage their own records, and admins see the whole picture.</p>
+        <div class="form-actions">
+            <a class="btn" href="{% url 'signup' %}">Create an account</a>
+            <a class="btn secondary" href="{% url 'login' %}">Log in</a>
+        </div>
+    </section>
 {% endblock %}

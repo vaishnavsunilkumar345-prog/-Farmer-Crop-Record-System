@@ -1,37 +1,61 @@
 {% extends 'crops/base.html' %}
+{% block title %}{% if user.is_staff %}All crop records{% else %}My crops{% endif %} - Crop Records{% endblock %}
 {% block content %}
-    <h2>Crop Records</h2>
-    <p><a class="btn" href="{% url 'add_crop' %}">Add New Crop</a></p>
-    <table>
-        <thead>
-            <tr>
-                <th>Sl. No.</th>
-                <th>Crop Name</th>
-                <th>Farmer Name</th>
-                <th>Season</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for crop in crops %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ crop.crop_name }}</td>
-                    <td>{{ crop.farmer_name }}</td>
-                    <td>{{ crop.season }}</td>
-                    <td>{{ crop.price }}</td>
-                    <td>
-                        <a href="{% url 'edit_crop' crop.pk %}">Edit</a>
-                        |
-                        <a href="{% url 'delete_crop' crop.pk %}">Delete</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="6">No crops found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="page-head">
+        <div>
+            <h1>{% if user.is_staff %}All crop records{% else %}My crops{% endif %}</h1>
+            <p>{{ crops|length }} record{{ crops|length|pluralize }}{% if query %} matching "{{ query }}"{% endif %}</p>
+        </div>
+        <a class="btn" href="{% url 'add_crop' %}">Add crop</a>
+    </div>
+
+    <form class="search" method="get" role="search">
+        <label for="q" class="sr-only" style="position:absolute;left:-9999px">Search records</label>
+        <input class="input" id="q" type="search" name="q" value="{{ query }}" placeholder="Search by crop, farmer or season">
+        <button class="btn secondary" type="submit">Search</button>
+        {% if query %}<a class="btn secondary" href="{% url 'crop_list' %}">Clear</a>{% endif %}
+    </form>
+
+    <div class="panel">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Crop</th>
+                        <th>Farmer</th>
+                        <th>Season</th>
+                        <th>Price</th>
+                        {% if user.is_staff %}<th>Added by</th>{% endif %}
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for crop in crops %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ crop.crop_name }}</td>
+                            <td>{{ crop.farmer_name }}</td>
+                            <td>{{ crop.season }}</td>
+                            <td>{{ crop.price }}</td>
+                            {% if user.is_staff %}<td>{% if crop.owner %}{{ crop.owner.username }}{% else %}No owner{% endif %}</td>{% endif %}
+                            <td class="actions">
+                                <a class="btn secondary small" href="{% url 'edit_crop' crop.pk %}">Edit</a>
+                                <form method="post" action="{% url 'delete_crop' crop.pk %}" onsubmit="return confirm('Delete {{ crop.crop_name|escapejs }}? This cannot be undone.');">
+                                    {% csrf_token %}
+                                    <button class="link-btn" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="{% if user.is_staff %}7{% else %}6{% endif %}" class="empty">
+                                {% if query %}No records match your search.{% else %}No crops yet. <a href="{% url 'add_crop' %}">Add the first one</a>.{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}
